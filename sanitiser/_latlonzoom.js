@@ -1,6 +1,6 @@
 // validate inputs, convert types and apply defaults
 function sanitize( req ){
-  
+
   var clean = req.clean || {};
   var params= req.query;
 
@@ -9,25 +9,26 @@ function sanitize( req ){
     params = {};
   }
 
-  // lat
-  var lat = parseFloat( params.lat, 10 );
-  if( isNaN( lat ) || lat < -90 || lat > 90 ){
-    return {
-      'error': true,
-      'message': 'invalid param \'lat\': must be >-90 and <90'
-    };
-  }
-  clean.lat = lat;
-
-  // lon
-  var lon = parseFloat( params.lon, 10 );
-  if( isNaN( lon ) || lon < -180 || lon > 180 ){
-    return {
-      'error': true,
-      'message': 'invalid param \'lon\': must be >-180 and <180'
-    };
-  }
-  clean.lon = lon;
+  // HEEFT BERT GEDAAN
+  // // lat
+  // var lat = parseFloat( params.lat, 10 );
+  // if( isNaN( lat ) || lat < -90 || lat > 90 ){
+  //   return {
+  //     'error': true,
+  //     'message': 'invalid param \'lat\': must be >-90 and <90'
+  //   };
+  // }
+  // clean.lat = lat;
+  //
+  // // lon
+  // var lon = parseFloat( params.lon, 10 );
+  // if( isNaN( lon ) || lon < -180 || lon > 180 ){
+  //   return {
+  //     'error': true,
+  //     'message': 'invalid param \'lon\': must be >-180 and <180'
+  //   };
+  // }
+  // clean.lon = lon;
 
   // zoom level
   var zoom = parseInt( params.zoom, 10 );
@@ -38,7 +39,7 @@ function sanitize( req ){
   }
 
   req.clean = clean;
-  
+
   return { 'error': false };
 
 }

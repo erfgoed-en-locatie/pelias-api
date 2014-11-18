@@ -11,11 +11,15 @@ function generate( params ){
 
   var query = queries.distance( centroid, { size: params.size } );
 
+  // HEEFT BERT GEDAAN
+  delete query.sort;
+  delete query.query.filtered.filter;
+
   // add search condition to distance query
   query.query.filtered.query = {
     query_string : {
       query: params.input,
-      fields: ['name.default'],
+      fields: ['source.name'],
       default_operator: 'OR'
     }
   };

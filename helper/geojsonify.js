@@ -54,34 +54,107 @@ function search( docs ){
   // flatten & expand data for geojson conversion
   var geodata = docs.map( function( doc ){
 
-    var output = {};
+    // ======= doc: =======
+    // {
+    //   "_source": {
+    //     "uri": "http://data.erfgeo.nl/grs/Place/Ootmarsum/1",
+    //     "date_created": "2014-11-18T10:46:26.893Z",
+    //     "source": {
+    //       "name": "Ootmarsum",
+    //       "uri": "http://vocab.getty.edu/tgn/1048021",
+    //       "dataset": "tgn"
+    //     },
+    //     "relationship": {
+    //       "created": "2014-11-18T10:46:26.893Z",
+    //       "author": "bert@waag.org",
+    //       "type": "grs:approximation",
+    //       "uri": "http://data.erfgeo.nl/grs/Relationship/Ootmarsum/1"
+    //     },
+    //     "target": {
+    //       "name": "Ootmarsum",
+    //       "uri": "http://lod.geodan.nl/basisreg/bag/woonplaats/id_1412",
+    //       "startDate": 2014,
+    //       "endDate": null,
+    //       "dataset": "bag",
+    //       "geometry": {
+    //         "type": "MultiPolygon",
+    //         "coordinates": [
+    //           [
+    //             [
+    //               [
+    //                 6.891786,
+    //                 52.415643
+    //               ],
+    //               [
+    //                 6.892063,
+    //                 52.415336
+    //               ]
+    //             ]
+    //           ]
+    //         ]
+    //       }
+    //     }
+    //   }
+    // }
 
-    // something went very wrong
-    if( !doc ) return warning();
+    // ======= MAAR WE WILLEN: =======
+    // {
+    //   "type": "FeatureCollection",
+    //   "features": [
+    //     {
+    //       "type": "Feature",
+    //       "properties": {
+    //         "uri": "http://data.erfgeo.nl/grs/Place/Amstelodamum/1",
+    //         "date_created": "2014-11-14 12:00:55",
+    //         "source": {
+    //           "name": "Amstelodamum",
+    //           "uri": "http://vocab.getty.edu/tgn/7006952",
+    //           "startDate": 1764,
+    //           "endDate": 1894,
+    //           "dataset": "tgn"
+    //         },
+    //         "relationship": {
+    //           "created": "2014-11-14 14:04:41",
+    //           "author": "taco@waag.org",
+    //           "type": "grs:approximation",
+    //           "uri": "http://data.erfgeo.nl/grs/Relationship/Amstelodamum/1"
+    //         },
+    //         "target": {
+    //           "name": "Amsterdam Stadsdeel Centrum",
+    //           "uri": "http://bag.nl/plaats/amsterdam-centrum",
+    //           "startDate": 2014,
+    //           "endDate": null,
+    //           "dataset": "bag"
+    //         }
+    //       },
+    //       "geometry": {
+    //         "type": "Polygon",
+    //         "coordinates": [
+    //           [
+    //             [4.896469, 52.386912],
+    //             [4.809820, 52.328593],
+    //             [4.801368, 52.357154],
+    //             [4.887973, 52.326120],
+    //             [4.941001, 52.325332],
+    //             [4.969253, 52.377275],
+    //             [4.901001, 52.408074],
+    //             [4.901275, 52.326762],
+    //             [4.896469, 52.386915]
+    //           ]
+    //         ]
+    //       }
+    //     }
+    //   ]
+    // }
 
-    // map center_point
-    if( !doc.center_point ) return warning();
-    output.lat = parseFloat( doc.center_point.lat );
-    output.lng = parseFloat( doc.center_point.lon );
+    var geometry = doc.target.geometry;
+    delete doc.target.geometry;
 
-    // map name
-    if( !doc.name || !doc.name.default ) return warning();
-    output.name = doc.name.default;
-
-    // map admin values
-    if( doc.alpha3 ){ output.alpha3 = doc.alpha3; }
-    if( doc.admin0 ){ output.admin0 = doc.admin0; }
-    if( doc.admin1 ){ output.admin1 = doc.admin1; }
-    if( doc.admin1_abbr ){ output.admin1_abbr = doc.admin1_abbr; }
-    if( doc.admin2 ){ output.admin2 = doc.admin2; }
-    if( doc.local_admin ){ output.local_admin = doc.local_admin; }
-    if( doc.locality ){ output.locality = doc.locality; }
-    if( doc.neighborhood ){ output.neighborhood = doc.neighborhood; }
-
-    // map suggest output
-    if( doc.suggest && doc.suggest.output ){
-      output.text = doc.suggest.output;
-    }
+    var output = {
+      type: "Feature",
+      properties: doc,
+      geometry: geometry
+    };
 
     return output;
 
@@ -91,7 +164,11 @@ function search( docs ){
   });
 
   // convert to geojson
-  return GeoJSON.parse( geodata, { Point: ['lat', 'lng'] } );
+  //return GeoJSON.parse( geodata, { Point: ['lat', 'lng'] } );
+  return {
+    type: "FeatureCollection",
+    features: geodata
+  }
 
 }
 
